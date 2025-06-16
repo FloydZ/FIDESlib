@@ -302,13 +302,13 @@ std::vector<uint64_t> Context::ElemForEvalMult(int level, const double operand) 
     return result;
 }
 
-std::ostream& operator<<(std::ostream& o, const uint128_t& x) {
-    if (x == std::numeric_limits<uint128_t>::min())
-        return o << "0";
-    if (x < 10)
-        return o << (char)(x + '0');
-    return o << x / 10 << (char)(x % 10 + '0');
-}
+// std::ostream& operator<<(std::ostream& o, const uint128_t& x) {
+//     if (x == std::numeric_limits<uint128_t>::min())
+//         return o << "0";
+//     if (x < 10)
+//         return o << (char)(x + '0');
+//     return o << x / 10 << (char)(x % 10 + '0');
+// }
 
 std::vector<uint64_t> Context::ElemForEvalAddOrSub(const int level, const double operand, const int noise_deg) {
     usint sizeQl = level + 1;

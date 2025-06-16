@@ -520,7 +520,7 @@ void FIDESlib::CKKS::AddBootstrapPrecomputation(lbcrypto::CryptoContext<lbcrypto
             auto auxInvA = precom->m_U0Pre;
 
             result.LT.A.clear();
-            for (int i = 0; i < auxA.size(); ++i) {
+            for (uint32_t i = 0; i < auxA.size(); ++i) {
                 RawPlainText raw = GetRawPlainText(cc, auxA.at(i));
                 result.LT.A.emplace_back(GPUcc, raw);
                 if constexpr (remove_extension)
@@ -543,7 +543,7 @@ void FIDESlib::CKKS::AddBootstrapPrecomputation(lbcrypto::CryptoContext<lbcrypto
             }
 
             result.LT.invA.clear();
-            for (int i = 0; i < auxInvA.size(); ++i) {
+            for (uint32_t i = 0; i < auxInvA.size(); ++i) {
                 RawPlainText raw = GetRawPlainText(cc, auxInvA.at(i));
                 result.LT.invA.emplace_back(GPUcc, raw);
                 if constexpr (remove_extension)
@@ -620,11 +620,11 @@ void FIDESlib::CKKS::AddBootstrapPrecomputation(lbcrypto::CryptoContext<lbcrypto
             std::shared_ptr<FHECKKSRNS> fhe = std::dynamic_pointer_cast<lbcrypto::FHECKKSRNS>(cc->GetScheme()->m_FHE);
 
             if (!isSparse) {
-                auxA = fhe->EvalLinearTransformPrecompute(*cc, U0hatT, scaleEnc, lEnc, false);
-                auxInvA = fhe->EvalLinearTransformPrecompute(*cc, U0, scaleDec, lDec, false);
+                auxA = fhe->EvalLinearTransformPrecompute(*cc, U0hatT, scaleEnc, lEnc);
+                auxInvA = fhe->EvalLinearTransformPrecompute(*cc, U0, scaleDec, lDec);
             } else {
-                auxA = fhe->EvalLinearTransformPrecompute(*cc, U0hatT, U1hatT, 0, scaleEnc, lEnc, false);
-                auxInvA = fhe->EvalLinearTransformPrecompute(*cc, U0, U1, 1, scaleDec, lDec, false);
+                auxA = fhe->EvalLinearTransformPrecompute(*cc, U0hatT, U1hatT, 0, scaleEnc, lEnc);
+                auxInvA = fhe->EvalLinearTransformPrecompute(*cc, U0, U1, 1, scaleDec, lDec);
             }
 
             result.LT.A.clear();

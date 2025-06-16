@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+cd openfhe
+git checkout v1.2.3
+git submodule update --init
+# git apply ../../cmake/openfhe-hook.patch
+# git apply ../../cmake/openfhe-base.patch
+git apply ../openfhe.patch
+mkdir build
+cd build 
+cmake -DCMAKE_INSTALL_PREFIX=../../openfhe-install ..
+make -j12
+make install -j12 
+
+

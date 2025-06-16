@@ -1396,7 +1396,7 @@ TEST_P(OpenFHEInterfaceTest, MatVecPt) {
         ptxt.emplace_back(cc->MakeCKKSPackedPlaintext(x[i]));
     }
     std::cout << "Input x2: " << ptxt[0] << std::endl;
-    using Cipher = lbcrypto::Ciphertext<lbcrypto::DCRTPolyImpl<bigintdyn::mubintvec<bigintdyn::ubint<unsigned long>>>>;
+    using Cipher = lbcrypto::Ciphertext<lbcrypto::DCRTPolyImpl<bigintdyn::mubintvec<bigintdyn::ubint<unsigned long long>>>>;
     std::vector<Cipher> ct;
     for (int i = 0; i < 8; ++i)
         ct.emplace_back(cc->Encrypt(keys.publicKey, ptxt1));

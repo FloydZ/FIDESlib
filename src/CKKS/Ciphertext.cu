@@ -548,7 +548,7 @@ void Ciphertext::rotate_hoisted(const std::vector<KeySwitchingKey*>& ksk, const 
     }
     c1.modupInto(cc.getKeySwitchAux());
 
-    for (int i = 0; i < ksk.size(); ++i) {
+    for (uint32_t i = 0; i < ksk.size(); ++i) {
         if (indexes[i] == 0) {
             results[i]->copy(*this);
         } else {
@@ -620,7 +620,7 @@ void Ciphertext::evalLinearWSumMutable(uint32_t n, const std::vector<Ciphertext>
         this->c1.grow(ctxs[0].getLevel(), true);
         this->NoiseLevel = 1;
 
-        for (int i = 0; i < n; ++i) {
+        for (uint32_t i = 0; i < n; ++i) {
             if (cc.rescaleTechnique == Context::FIXEDMANUAL) {
                 assert(ctxs[i].NoiseLevel == 1);
                 assert(getLevel() <= ctxs[i].getLevel());
@@ -631,7 +631,7 @@ void Ciphertext::evalLinearWSumMutable(uint32_t n, const std::vector<Ciphertext>
         }
 
         std::vector<uint64_t> elem;
-        for (int i = 0; i < n; ++i) {
+        for (uint32_t i = 0; i < n; ++i) {
             auto aux = cc.ElemForEvalMult(c0.getLevel(), weights[i]);
             for (auto j : aux)
                 elem.push_back(j);
@@ -639,7 +639,7 @@ void Ciphertext::evalLinearWSumMutable(uint32_t n, const std::vector<Ciphertext>
 
         std::vector<const RNSPoly*> c0s(n), c1s(n);
 
-        for (int i = 0; i < n; ++i) {
+        for (uint32_t i = 0; i < n; ++i) {
             c0s[i] = &ctxs[i].c0;
             c1s[i] = &ctxs[i].c1;
         }
@@ -855,6 +855,8 @@ bool Ciphertext::adjustForAddOrSub(const Ciphertext& b) {
             return true;
         }
     }
+
+    return true;
 }
 
 bool Ciphertext::adjustForMult(const Ciphertext& ciphertext) {

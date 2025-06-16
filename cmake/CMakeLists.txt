@@ -15,5 +15,5 @@ set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 ExternalProject_Add(OpenFHE
 	GIT_REPOSITORY https://github.com/openfheorg/openfhe-development.git
 	GIT_TAG main
-	PATCH_COMMAND git reset --hard v1.2.3 && git config user.email "FIDESlib" && git config user.name "FIDESlib" && git am ${PATCH_HOOK} && git am ${PATCH_BASE}
+	PATCH_COMMAND git checkout v1.2.3 && git apply ${PATCH_HOOK} && git apply ${PATCH_BASE}
 )

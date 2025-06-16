@@ -41,13 +41,13 @@ void FIDESlib::CKKS::EvalLinearTransform(Ciphertext& ctxt, int slots, bool decod
 
     std::vector<Ciphertext> fastRotation;
 
-    for (int i = 0; i < bStep - 1; ++i)
+    for (uint32_t i = 0; i < bStep - 1; ++i)
         fastRotation.emplace_back(cc);
 
     std::vector<Ciphertext*> fastRotationPtr;
     std::vector<int> indexes;
     std::vector<KeySwitchingKey*> keys;
-    for (int i = 1; i < bStep; ++i) {
+    for (uint32_t i = 1; i < bStep; ++i) {
         fastRotationPtr.push_back(&fastRotation[i - 1]);
         keys.push_back(&cc.GetRotationKey(i));
         indexes.push_back(i);
@@ -56,7 +56,7 @@ void FIDESlib::CKKS::EvalLinearTransform(Ciphertext& ctxt, int slots, bool decod
     if (0) {
         ctxt.rotate_hoisted(keys, indexes, fastRotationPtr);
     } else {
-        for (int i = 0; i < bStep - 1; ++i) {
+        for (uint32_t i = 0; i < bStep - 1; ++i) {
             fastRotation[i].rotate(ctxt, i + 1, cc.GetRotationKey(i + 1));
             //cudaDeviceSynchronize();
         }
@@ -70,7 +70,7 @@ void FIDESlib::CKKS::EvalLinearTransform(Ciphertext& ctxt, int slots, bool decod
 
         inner.multPt(ctxt, A[bStep * j], false);
         for (uint32_t i = 1; i < bStep; i++) {
-            if (bStep * j + i < slots) {
+            if (bStep * j + i < (uint32_t)slots) {
                 inner.addMultPt(fastRotation[i - 1], A[bStep * j + i], false);
             }
         }
@@ -111,7 +111,7 @@ void FIDESlib::CKKS::EvalCoeffsToSlots(Ciphertext& ctxt, int slots, bool decode)
         std::vector<int> indexes;
         std::vector<KeySwitchingKey*> keys;
 
-        for (int i = 0; i < step.bStep; ++i) {
+        for (uint32_t i = 0; i < (uint32_t)step.bStep; ++i) {
             if (i >= auxiliar.size()) {
                 auxiliar.emplace_back(cc);
             }
@@ -146,7 +146,7 @@ void FIDESlib::CKKS::EvalCoeffsToSlots(Ciphertext& ctxt, int slots, bool decode)
         }
 
         steps++;
-        if (steps != (decode ? cc.GetBootPrecomputation(slots).StC : cc.GetBootPrecomputation(slots).CtS).size())
+        if ((uint32_t)steps != (decode ? cc.GetBootPrecomputation(slots).StC : cc.GetBootPrecomputation(slots).CtS).size())
             outer.rescale();
         result.copy(outer);
     }
