@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 mkdir -p openfhe-install
+git submodule update --init
 
 cd openfhe
 git checkout v1.2.3
