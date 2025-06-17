@@ -5,9 +5,9 @@ mkdir -p openfhe-install
 cd openfhe
 git checkout v1.2.3
 git submodule update --init
-# git apply ../../cmake/openfhe-hook.patch
-# git apply ../../cmake/openfhe-base.patch
-git apply ../openfhe.patch
+git apply ../../cmake/openfhe-hook.patch
+git apply ../../cmake/openfhe-base.patch
+# git apply ../openfhe.patch
 mkdir build
 cd build 
 cmake -DCMAKE_INSTALL_PREFIX=../../openfhe-install ..
