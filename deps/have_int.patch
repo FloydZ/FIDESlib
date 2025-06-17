@@ -1,0 +1,12 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 37e5a4ab..7181e9ad 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -270,6 +270,7 @@ endif()
+ include(CheckTypeSize)
+ check_type_size("__int128" INT128)
+ check_type_size("uint64_t" INT64)
++set(HAVE_INT64 1)
+ 
+ if (NOT(BUILD_SHARED OR BUILD_STATIC))
+     message(SEND_ERROR "Either BUILD_SHARED or BUILD_STATIC neeed to be turned on.")
