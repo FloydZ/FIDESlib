@@ -36,9 +36,14 @@ If you use FIDESlib on your research, please cite our ISPASS paper.
 > [!IMPORTANT]
 > Requirements:
 >  -  Nvidia CUDA  version 12 or greater.
->  -  GNU GCC Compiler version 10 or greater.
+>  -  GNU GCC Compiler version 13 or greater.
 >  -  CMake version 3.25.2 or greater.
->  -  (Optional) Intel Thread Building Blocks for faster context creation.
+>  -  Intel Thread Building Blocks
+
+Ubuntu:
+```bash 
+sudo apt install make build-essential cmake git libtbb-dev
+```
 
 > [!NOTE]
 > Some dependencies will be automatically downloaded if needed:
@@ -46,22 +51,14 @@ If you use FIDESlib on your research, please cite our ISPASS paper.
 > - GoogleBenchmark: used by our benchmark suite.
 
 In order to be able to compile the project, one must follow these steps:
+``` bash
+git clone --recursive git@bitbucket.org:tiicrypto/tii-openfhe.git
+cd tii-openfhe 
+./build.sh
+```
 
-  - Clone this repository.
-  - Generate the makefiles with CMake.
-  ```bash
-  cmake -B $PATH_TO_BUILD_DIR -S $PATH_TO_THIS_REPO --fresh 
-  -DCMAKE_BUILD_TYPE="Release" -DFIDESLIB_INSTALL_OPENFHE=ON
-  ```
-  - Build the project.
-  ```bash
-  cmake --build $PATH_TO_BUILD_DIR -j
-  ```
+FIDESlib needs a patched version of OpenFHE in order to be able to access some internals needed for interoperability. This patched version will be automatically installed by the `build.sh` script
 
-FIDESlib needs a patched version of OpenFHE in order to be able to access some internals needed for interoperability. This patched version can be automatically installed by defining FIDESLIB_INSTALL_OPENFHE=ON CMake variable. By default this variable is set OFF.
-
-> [!WARNING]
-> Currently custom installation paths for patched OpenFHE are not supported. OpenFHE will be installed on the default path specified in their build files and you will probably need to run the build files generation command with administrator privileges.
 
 The build process produces the following artifacts: 
 - fideslib.a: The FIDESlib library to be statically linked to any client application.
@@ -75,6 +72,17 @@ The build process produces the following artifacts:
 > - Manually clone [OpenFHE](https://github.com/openfheorg/openfhe-development) and, with git, apply openfhe-hook.patch and openfhe-base.patch. 
 > - Generate the build files with CMake using Debug as build type.
 > - Compile and install OpenFHE on the machine. 
+
+
+### **Basic CMake Options**
+
+The following options can be used with CMake to configure the build. The default value for each option is denoted in **boldface** under the **Values** column:
+
+| CMake option               | Values                                      | Information                                                                      |
+|----------------------------|---------------------------------------------|----------------------------------------------------------------------------------|
+| `CMAKE_CUDA_ARCHITECTURES` | naitve                                      | Use this toolchain file to integrate vcpkg with CMake for dependency management. |
+| `BUILD_TESTS`              | **ON** / OFF                                | Build the tests for verifying the functionality of the project.                  |
+| `BUILD_BENCHMARKS`         | **ON** / OFF                                | Build the benchmarks                                                             |
 
 ## Installation
 
@@ -91,6 +99,23 @@ FIDESlib is currently ready to be consumed as a CMake library. The template proj
 
 > [!WARNING]
 > FIDESlib currently does not support custom installation paths. One should run the installation command with administrator priviledges.
+
+## Docker 
+Note: all commands are prefixed with `sudo`, which may be not neccessary, as 
+docker can be runned rootless.  Additionally :W
+
+In order to build the docker image, run the following command:
+```bash
+sudo docker build -t cuda-tests .
+```
+
+You can run binaries in the docker image via:
+```bash
+# Run tests
+sudo docker run --rm --device=nvidia.com/gpu=all cuda-tests ./build/fideslib-test
+# Run benchmarks
+sudo docker run --rm --device=nvidia.com/gpu=all cuda-tests ./build/fideslib-bench
+```
 
 ## Usage
 
