@@ -27,7 +27,7 @@ index 0f72d76..7a50096 100644
  set(CXX_STANDARD_REQUIRED ON)
  
 +# Set the default build type to debug
-+set(CMAKE_BUILD_TYPE "Debug")
++set(CMAKE_BUILD_TYPE_ "Debug")
 +
  #--------------------------------------------------------------------
  # Build options

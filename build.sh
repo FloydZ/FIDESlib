@@ -8,6 +8,6 @@ cd ..
 # now build the openfhe cuda wrapper
 mkdir -p build 
 cd build
-cmake .. 
+cmake ..  -DCMAKE_BUILD_TYPE=Release 
 make -j $(nproc)
 cd ..

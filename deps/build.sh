@@ -9,8 +9,9 @@ git submodule update --init
 git apply ../have_int.patch
 git apply ../../cmake/openfhe-hook.patch
 git apply ../../cmake/openfhe-base.patch
+git apply ../dug.patch
 mkdir -p build
 cd build 
-cmake -DCMAKE_INSTALL_PREFIX=../../openfhe-install ..
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../../openfhe-install ..
 make -j12
 make install -j12 
