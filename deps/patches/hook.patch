@@ -1,0 +1,119 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9f248b6d..8c2772ee 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -61,10 +61,10 @@ if (EMSCRIPTEN)
+     message("OpenMP is not supported by Emscripten")
+ else()
+     option(BUILD_SHARED "Set to ON to build shared versions of the library"            ON  )
+-    option(BUILD_STATIC "Set to ON to build static versions of the library"            OFF )
+-    option(BUILD_UNITTESTS "Set to ON to build unit tests for the library"             ON  )
+-    option(BUILD_EXAMPLES "Set to ON to build examples for the library"                ON  )
+-    option(BUILD_BENCHMARKS "Set to ON to build benchmarks for the library"            ON  )
++    option(BUILD_STATIC "Set to ON to build static versions of the library"            ON  )
++    option(BUILD_UNITTESTS "Set to ON to build unit tests for the library"             OFF )
++    option(BUILD_EXAMPLES "Set to ON to build examples for the library"                OFF )
++    option(BUILD_BENCHMARKS "Set to ON to build benchmarks for the library"            OFF )
+     option(WITH_OPENMP "Use OpenMP to enable <omp.h>"                                  ON  )
+ endif()
+ 
+@@ -194,11 +194,11 @@ if(UNIX AND NOT APPLE AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+ endif()
+ 
+ if(BUILD_STATIC)
+-    set(OpenFHE_STATIC_LIBS OPENFHEcore_static OPENFHEpke_static OPENFHEbinfhe_static)
++    set(OpenFHE_STATIC_LIBS OPENFHEcore_static OPENFHEpke_static OPENFHEbinfhe_static OPENFHEhook_static)
+ endif()
+ 
+ if(BUILD_SHARED)
+-    set(OpenFHE_SHARED_LIBS OPENFHEcore OPENFHEpke OPENFHEbinfhe)
++    set(OpenFHE_SHARED_LIBS OPENFHEcore OPENFHEpke OPENFHEbinfhe OpenFHEhook)
+ endif()
+ 
+ set(OpenFHE_PACKAGE_LIBS ${OpenFHE_STATIC_LIBS} ${OpenFHE_SHARED_LIBS})
+@@ -666,6 +666,7 @@ if(BUILD_UNITTESTS)
+ endif()
+ 
+ ### add each of the subdirs of src
++add_subdirectory(src/hook)
+ add_subdirectory(src/core)
+ add_subdirectory(src/pke)
+ add_subdirectory(src/binfhe)
+diff --git a/src/binfhe/CMakeLists.txt b/src/binfhe/CMakeLists.txt
+index bce53ac1..67b4607e 100644
+--- a/src/binfhe/CMakeLists.txt
++++ b/src/binfhe/CMakeLists.txt
+@@ -4,6 +4,13 @@
+ 
+ # all files named *.cpp are compiled to form the library
+ file(GLOB BINFHE_SRC_FILES CONFIGURE_DEPENDS lib/*.cpp)
++# Hook headers inclusion
++list(APPEND BINFHE_INCLUDE_DIRS 
++		"${CMAKE_CURRENT_SOURCE_DIR}/../hook"
++		#"${CMAKE_CURRENT_SOURCE_DIR}/../core/include"
++		#"${CMAKE_CURRENT_SOURCE_DIR}/../pke/include"
++		#"${CMAKE_CURRENT_SOURCE_DIR}/../binfhe/include"
++)
+ 
+ include_directories(${CORE_INCLUDE_DIRS})
+ list(APPEND BINFHE_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include")
+@@ -16,6 +23,7 @@ set(BINFHE_VERSION_PATCH ${OPENFHE_VERSION_PATCH})
+ set(BINFHE_VERSION ${BINFHE_VERSION_MAJOR}.${BINFHE_VERSION_MINOR}.${BINFHE_VERSION_PATCH})
+ 
+ add_library(binfheobj OBJECT ${BINFHE_SRC_FILES})
++add_dependencies(binfheobj OPENFHEhook_static) # Hook dependency
+ set_property(TARGET binfheobj PROPERTY POSITION_INDEPENDENT_CODE 1)
+ 
+ if(BUILD_SHARED)
+diff --git a/src/core/CMakeLists.txt b/src/core/CMakeLists.txt
+index 153ae95a..c1f05084 100644
+--- a/src/core/CMakeLists.txt
++++ b/src/core/CMakeLists.txt
+@@ -4,6 +4,12 @@
+ 
+ # all files named *.c or */cpp are compiled to form the library
+ file(GLOB_RECURSE CORE_SRC_FILES CONFIGURE_DEPENDS lib/*.c lib/*.cpp lib/utils/*.cpp)
++# Hook headers inclusion
++list(APPEND CORE_INCLUDE_DIRS
++		"${CMAKE_CURRENT_SOURCE_DIR}/../hook"
++		"${CMAKE_CURRENT_SOURCE_DIR}/../pke/include"
++		"${CMAKE_CURRENT_SOURCE_DIR}/../binfhe/include"
++)
+ 
+ list(APPEND CORE_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include")
+ list(APPEND CORE_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/lib")
+@@ -16,7 +22,7 @@ set(CORE_VERSION_PATCH ${OPENFHE_VERSION_PATCH})
+ set(CORE_VERSION ${CORE_VERSION_MAJOR}.${CORE_VERSION_MINOR}.${CORE_VERSION_PATCH})
+ 
+ add_library(coreobj OBJECT ${CORE_SRC_FILES})
+-add_dependencies(coreobj third-party)
++add_dependencies(coreobj third-party OPENFHEhook_static)
+ 
+ set_property(TARGET coreobj PROPERTY POSITION_INDEPENDENT_CODE 1)
+ 
+diff --git a/src/pke/CMakeLists.txt b/src/pke/CMakeLists.txt
+index f4eb7ab1..856563c3 100644
+--- a/src/pke/CMakeLists.txt
++++ b/src/pke/CMakeLists.txt
+@@ -4,6 +4,13 @@
+ 
+ # all files named *.cpp are compiled to form the library
+ file(GLOB_RECURSE PKE_SRC_FILES CONFIGURE_DEPENDS lib/*.cpp)
++# Hook headers inclusion
++list(APPEND PKE_INCLUDE_DIRS 
++		"${CMAKE_CURRENT_SOURCE_DIR}/../hook"
++		#"${CMAKE_CURRENT_SOURCE_DIR}/../core/include"
++		#"${CMAKE_CURRENT_SOURCE_DIR}/../pke/include"
++		#"${CMAKE_CURRENT_SOURCE_DIR}/../binfhe/include"
++)
+ 
+ include_directories(${CORE_INCLUDE_DIRS})
+ list(APPEND PKE_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include")
+@@ -16,6 +23,7 @@ set(PKE_VERSION_PATCH ${OPENFHE_VERSION_PATCH})
+ set(PKE_VERSION ${PKE_VERSION_MAJOR}.${PKE_VERSION_MINOR}.${PKE_VERSION_PATCH})
+ 
+ add_library(pkeobj OBJECT ${PKE_SRC_FILES})
++add_dependencies(pkeobj OPENFHEhook_static) # Hook dependency
+ set_property(TARGET pkeobj PROPERTY POSITION_INDEPENDENT_CODE 1)
+ 
+ if(BUILD_SHARED)

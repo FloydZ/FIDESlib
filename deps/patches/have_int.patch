@@ -1,0 +1,12 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9f248b6d..7a991fed 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -267,6 +267,7 @@ endif()
+ include(CheckTypeSize)
+ check_type_size("__int128" INT128)
+ check_type_size("uint64_t" INT64)
++set(HAVE_INT64 1)
+ 
+ ### dsuponit: uncomment the following "if" block if HAVE_INT64 is false. It may happen when compiling with pthreads enabled.
+ ### Seems like I have disabled link with pthreads for Emscripten in all makefiles

@@ -1,0 +1,36 @@
+diff --git a/src/pke/include/schemebase/base-scheme.h b/src/pke/include/schemebase/base-scheme.h
+index 3fb33ce1..858b31dd 100644
+--- a/src/pke/include/schemebase/base-scheme.h
++++ b/src/pke/include/schemebase/base-scheme.h
+@@ -54,6 +54,7 @@
+ #include <string>
+ #include <memory>
+ #include <utility>
++#include <scheme/ckksrns/ckksrns-fhe.h>
+ 
+ /**
+  * @namespace lbcrypto
+@@ -1450,6 +1451,14 @@ public:
+ 
+     // SCHEMESWITCHING methods
+ 
++    std::pair<Ciphertext<Element>, Ciphertext<Element>>
++            EvalBootstrapDensePartial(ConstCiphertext<Element> ciphertext, uint32_t numIterations = 1,
++                                          uint32_t precision = 0) const {
++        VerifyFHEEnabled(__func__);
++
++        return dynamic_cast<lbcrypto::FHECKKSRNS *>(m_FHE.get())->EvalBootstrapDensePartial(ciphertext, numIterations, precision);
++    }
++
+     LWEPrivateKey EvalCKKStoFHEWSetup(const SchSwchParams& params) {
+         VerifySchemeSwitchEnabled(__func__);
+         return m_SchemeSwitch->EvalCKKStoFHEWSetup(params);
+@@ -1751,7 +1760,7 @@ public:
+         return out;
+     }
+ 
+-protected:
++public:
+     std::shared_ptr<ParameterGenerationBase<Element>> m_ParamsGen;
+     std::shared_ptr<PKEBase<Element>> m_PKE;
+     std::shared_ptr<KeySwitchBase<Element>> m_KeySwitch;
