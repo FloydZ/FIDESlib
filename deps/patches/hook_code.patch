@@ -1,0 +1,101 @@
+diff --git a/src/hook/CMakeLists.txt b/src/hook/CMakeLists.txt
+new file mode 100644
+index 0000000..a406094
+--- /dev/null
++++ b/src/hook/CMakeLists.txt
+@@ -0,0 +1,38 @@
++add_library(hook STATIC hook.cpp)
++set_property(TARGET hook PROPERTY POSITION_INDEPENDENT_CODE 1)
++
++set(HOOK_VERSION_MAJOR ${OPENFHE_VERSION_MAJOR})
++set(HOOK_VERSION_MINOR ${OPENFHE_VERSION_MINOR})
++set(HOOK_VERSION_PATCH ${OPENFHE_VERSION_PATCH})
++set(HOOK_VERSION ${HOOK_VERSION_MAJOR}.${HOOK_VERSION_MINOR}.${HOOK_VERSION_PATCH})
++
++list(APPEND HOOK_INCLUDE_DIRS
++		"${CMAKE_CURRENT_SOURCE_DIR}/../core/include"
++		"${CMAKE_CURRENT_SOURCE_DIR}/../pke/include"
++		"${CMAKE_CURRENT_SOURCE_DIR}/../binfhe/include"
++)
++set(HOOK_INCLUDE_DIRS "${HOOK_INCLUDE_DIRS}" CACHE INTERNAL "")
++
++target_include_directories(hook PUBLIC ${HOOK_INCLUDE_DIRS})
++
++if ( BUILD_SHARED )
++	add_library (OPENFHEhook SHARED $<TARGET_OBJECTS:hook>)
++	set_property(TARGET OPENFHEhook PROPERTY VERSION ${HOOK_VERSION})
++	set_property(TARGET OPENFHEhook PROPERTY SOVERSION ${HOOK_VERSION_MAJOR})
++	set_property(TARGET OPENFHEhook PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
++	install(TARGETS OPENFHEhook
++		EXPORT OpenFHETargets
++		DESTINATION lib)
++endif()
++
++
++if( BUILD_STATIC )
++	add_library (OPENFHEhook_static STATIC $<TARGET_OBJECTS:hook>)
++	set_property(TARGET OPENFHEhook_static PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
++	install(TARGETS OPENFHEhook_static
++		EXPORT OpenFHETargets
++		DESTINATION lib)
++endif()
++
++install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
++	DESTINATION include/openfhe)
+\ No newline at end of file
+diff --git a/src/hook/hook.cpp b/src/hook/hook.cpp
+new file mode 100644
+index 0000000..4299c4d
+--- /dev/null
++++ b/src/hook/hook.cpp
+@@ -0,0 +1,8 @@
++#include "hook.h"
++
++namespace debug {
++
++	bool enabled = true;
++};
++
++
+diff --git a/src/hook/hook.h b/src/hook/hook.h
+new file mode 100644
+index 0000000..77bb909
+--- /dev/null
++++ b/src/hook/hook.h
+@@ -0,0 +1,35 @@
++#ifndef HOOK__
++#define HOOK__
++
++#include "openfhe.h"
++
++#include <map>
++
++namespace debug {
++
++extern bool enabled;
++
++template <typename T>
++class record {
++private:
++    static std::map<size_t, T> values;
++
++public:
++    static void set(T value, size_t index) {
++        values.emplace(index, value);
++    }
++    static T get(size_t index) {
++        return values[index];		
++    }
++};
++
++template <typename T>
++std::map<size_t, T> record<T>::values;
++
++#define RECORD_GET(T, index)   if (debug::enabled) { debug::record<T>::get(index); }
++#define RECORD_SET(val, index) if (debug::enabled) { debug::record<decltype(val)>::set(val, index); }
++#define RECORD_PRINT(T, index) if (debug::enabled) { std::cout << debug::record<T>::get(index) << std::endl; }
++
++};
++
++#endif
+\ No newline at end of file
