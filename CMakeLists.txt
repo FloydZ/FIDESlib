@@ -263,6 +263,16 @@ set(BENCHMARK_INSTALL_DOCS OFF)
 if (BUILD_BENCHMARKS)
     FetchContent_Declare(benchmark GIT_REPOSITORY https://github.com/google/benchmark.git GIT_TAG main)
     FetchContent_MakeAvailable(benchmark)
+    message(INFO "patching ${benchmark_SOURCE_DIR}")
+    execute_process(
+      COMMAND ${CMAKE_COMMAND} -E chdir ${benchmark_SOURCE_DIR} 
+              patch -p1 < ${CMAKE_SOURCE_DIR}/deps/patches/google-benchmark.patch
+      RESULT_VARIABLE PATCH_RESULT
+    )
+
+    # if(NOT PATCH_RESULT EQUAL 0)
+    #   message(FATAL_ERROR "Failed to apply benchmark patch")
+    # endif()
     
     set(BENCH_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bench)
     file(GLOB_RECURSE BENCH_SOURCE_FILES ${BENCH_SOURCE_DIR}/*.cu ${BENCH_SOURCE_DIR}/*.cpp ${BENCH_SOURCE_DIR}/*.cuh ${BENCH_SOURCE_DIR}/*.hpp)

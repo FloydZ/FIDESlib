@@ -29,6 +29,7 @@ stdenv.mkDerivation {
     openssl
     pkg-config
   ]++ (lib.optionals pkgs.stdenv.isLinux ([
+    docker-compose
   ]));
 
   shellHook = ''
