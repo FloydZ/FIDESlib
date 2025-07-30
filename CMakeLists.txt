@@ -270,9 +270,9 @@ if (BUILD_BENCHMARKS)
       RESULT_VARIABLE PATCH_RESULT
     )
 
-    # if(NOT PATCH_RESULT EQUAL 0)
-    #   message(FATAL_ERROR "Failed to apply benchmark patch")
-    # endif()
+    if(NOT PATCH_RESULT EQUAL 0)
+        message(WARNING "Failed to apply benchmark patch. Maybe its already applied?")
+    endif()
     
     set(BENCH_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bench)
     file(GLOB_RECURSE BENCH_SOURCE_FILES ${BENCH_SOURCE_DIR}/*.cu ${BENCH_SOURCE_DIR}/*.cpp ${BENCH_SOURCE_DIR}/*.cuh ${BENCH_SOURCE_DIR}/*.hpp)
